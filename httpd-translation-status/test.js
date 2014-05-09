@@ -65,7 +65,12 @@ function moveVersion(ver){
 			return;
 		}
 		if(req.status != 200){
-			showMsg("HTTP " + req.status + " Error", "errormsg");
+			if(req.status == 0){
+				showMsg("Unknown Error", "errormsg");
+			}
+			else{
+				showMsg("HTTP " + req.status + " Error", "errormsg");
+			}
 			return;
 		}
 		removeAllChild(e);
