@@ -32,3 +32,10 @@ td.uptodate{
 td.notranslation{
     background-color: #FFF;
 }
+
+.errormsg{
+    background-color: #FF0;
+}
+.infomsg{
+    background-color: #0FF;
+}

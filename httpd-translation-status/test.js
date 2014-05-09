@@ -31,6 +31,22 @@ function ctd(tr, innerHTML){
 	return td;
 }
 
+function removeAllChild(e){
+	var c = e.childNodes;
+	for(var i = 0; i < c.length; ++i){
+		e.removeChild(c[i]);
+	}
+}
+
+function showMsg(text, cname){
+	var e = document.getElementById("main");
+	removeAllChild(e);
+	var foo = ce("div", e);
+	foo.className = cname;
+	foo.innerHTML = text;
+}
+
+
 function getVersion(){
 	var h = location.hash.substr(1);
 	return h == "2.0" || h == "2.2" || h == "2.4" || h == "trunk" ? h : null;
@@ -38,16 +54,16 @@ function getVersion(){
 
 function moveVersion(ver){
 	location.hash = "#" + ver;
-	if(table != null){
-		table.remove();
-		table = null;
-	}
+	
+	var e = document.getElementById("main");
+	showMsg("loading...", "infomsg");
+
 	var req = new XMLHttpRequest();
 	req.open('GET', ver + ".json", true);
 	req.onreadystatechange = function(){
 		if (req.readyState == 4 && req.status == 200){
-			table = ce("table", document.getElementsByTagName("body")[0]);
-			var tb = ce("tbody", table);
+			removeAllChild(e);
+			var tb = ce("tbody", ce("table", e));
 			var obj = JSON.parse(req.responseText);
 			
 			//ヘッダ
@@ -76,11 +92,29 @@ function moveVersion(ver){
 	req.send(null);
 }
 
-var ver = getVersion();
-var table = null;
-if(ver == null){
-	//TODO: エラー
-}
-else{
-	moveVersion(ver);
-}
+window.onload = function(){
+	var ver = getVersion();
+	if(ver == null){
+		showMsg("unknown version", "errormsg");
+	}
+	else{
+		moveVersion(ver);
+	}
+	
+	document.getElementById("link_trunk").onclick = function(){
+		moveVersion("trunk");
+		return false;
+	};
+	document.getElementById("link_2.4").onclick = function(){
+		moveVersion("2.4");
+		return false;
+	};
+	document.getElementById("link_2.2").onclick = function(){
+		moveVersion("2.2");
+		return false;
+	};
+	document.getElementById("link_2.0").onclick = function(){
+		moveVersion("2.0");
+		return false;
+	};
+};
