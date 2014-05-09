@@ -23,27 +23,20 @@ function ce(tagname, parent){
 	return el;
 }
 
-function ctd(tr, innerHTML){
+function ctd(tr, text){
 	var td = ce("td", tr);
-	if(innerHTML != null){
-		td.innerHTML = innerHTML;
+	if(text != null){
+		td.textContent = text;
 	}
 	return td;
 }
 
-function removeAllChild(e){
-	var c = e.childNodes;
-	for(var i = 0; i < c.length; ++i){
-		e.removeChild(c[i]);
-	}
-}
-
 function showMsg(text, cname){
 	var e = document.getElementById("main");
-	removeAllChild(e);
+	e.textContent = "";
 	var foo = ce("div", e);
 	foo.className = cname;
-	foo.innerHTML = text;
+	foo.textContent = text;
 }
 
 
@@ -61,7 +54,7 @@ function moveVersion(ver){
 	var req = new XMLHttpRequest();
 	req.open('GET', ver + ".json", true);
 	req.onreadystatechange = function(){
-		if(req.readyState != 4){
+		if(req.readyState != XMLHttpRequest.DONE){
 			return;
 		}
 		if(req.status != 200){
@@ -73,7 +66,7 @@ function moveVersion(ver){
 			}
 			return;
 		}
-		removeAllChild(e);
+		e.textContent = "";
 		var tb = ce("tbody", ce("table", e));
 		var obj = JSON.parse(req.responseText);
 		
@@ -82,7 +75,7 @@ function moveVersion(ver){
 			var tr = ce("tr", tb);
 			ce("th", tr);
 			for(var i = 0; i < obj["langs"].length; ++i){
-				 ce("th", tr).innerHTML = obj["langs"][i];
+				 ce("th", tr).textContent = obj["langs"][i];
 			}
 		}
 		//ボディ
