@@ -72,7 +72,7 @@ find_xml $dir | while read file;  do
 	else
 		echo ", "
 	fi
-	echo -n "{ \"filename\": \"$file\","
+	echo -n "{ \"filename\": \"${file#./}\","
 	echo -n " \"en\": "
 	english $file
 	for lang in $langs; do
