@@ -42,13 +42,12 @@ find_xml(){
 
 #1個目の引数で、マニュアルディレクトリを指定する。
 #引数無しの場合、カレントディレクトリとする。
-dir="."
 if [ $# -ge 1 ];then
-	dir=$1
+	cd "$1" || exit 1
 fi
 
 
-langs=`ls ${dir}/style/lang | egrep -v "^en.xml$" | awk -F . '{printf $1 " ";}'`
+langs=`ls style/lang | egrep -v "^en.xml$" | awk -F . '{printf $1 " ";}'`
 
 #1行目 言語一覧
 #2行目以降
@@ -66,7 +65,7 @@ echo "\"files\": ["
 
 
 first=1
-find_xml $dir | while read file;  do
+find_xml . | while read file;  do
 	if [ $first -eq 1 ];then
 		first=0
 	else
