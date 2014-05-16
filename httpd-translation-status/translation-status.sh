@@ -25,7 +25,6 @@ otherlang(){
 is_manualpage(){
 	test `grep "common.dtd" $1 | wc -l` -gt 0 || 
 	test `grep "faq.dtd" $1 | wc -l` -gt 0 || 
-	test `grep "lang.dtd" $1 | wc -l` -gt 0 || 
 	test `grep "manualpage.dtd" $1 | wc -l` -gt 0 || 
 	test `grep "modulesynopsis.dtd" $1 | wc -l` -gt 0 || 
 	test `grep "sitemap.dtd" $1 | wc -l` -gt 0
@@ -64,13 +63,23 @@ echo " ],"
 echo "\"files\": ["
 
 
-first=1
+(
+	cd style/lang && (
+		echo -n "{ \"filename\": \"style/lang/\","
+		echo -n " \"en\": "
+		english en.xml
+		for lang in $langs; do
+			foo=$(otherlang "${lang}.xml")
+			if [ "$foo" != "" ];then
+				echo -n ", \"${lang}\": ${foo}"
+			fi
+		done
+		echo -n " }"
+	)
+)
+
 find_xml . | while read file;  do
-	if [ $first -eq 1 ];then
-		first=0
-	else
-		echo ", "
-	fi
+	echo ", "
 	echo -n "{ \"filename\": \"${file#./}\","
 	echo -n " \"en\": "
 	english $file
