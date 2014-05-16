@@ -12,7 +12,7 @@ english(){
 otherlang(){
 	if [ -f $1 ];then
 		#正規表現はmetafile.plから取った
-		local rev=`perl -e 'while(<>){ $rev = $1, last if /<!--\s*English\s+Revision\s*:\s*([^\s:]+)(?::(\S+)\s+\(outdated\))?\s+-->/xi;}; print $rev;' < $1`
+		local rev=`perl -e 'while(<>){ $rev = $1, last if /<!--\s*English\s+Revision\s*:\s*(\d+)(?::(\S+)\s+\(outdated\))?\s+-->/xi;}; print $rev;' < $1`
 
 		if [ -n "$rev" ];then
 			echo -n $rev
