@@ -16,36 +16,19 @@ function className(value, envalue, lang){
 	return "unknown";
 }
 
-function ce(tagname, parent){
-	var el = document.createElement(tagname)
-	if(parent != null)
-		parent.appendChild(el);
-	return el;
-}
-
-function ctd(tr, text){
-	var td = ce("td", tr);
-	if(text != null){
-		td.textContent = text;
-	}
-	return td;
-}
-
 function docUrl(ver, filename){
 	var url = "http://httpd.apache.org/docs/" + ver;
 	url += "/" + filename.replace( /^(.+)\.xml$/g, '$1.html' );
 	return url;
 }
 
-
 function showMsg(text, cname){
-	var e = document.getElementById("main");
-	e.textContent = "";
-	var foo = ce("div", e);
+	var foo = document.createElement("div");
 	foo.className = cname;
 	foo.textContent = text;
+	var e = document.getElementById("main");
+	e.replaceChild(foo, e.firstChild);
 }
-
 
 function getVersion(){
 	var h = location.hash.substr(1);
@@ -73,35 +56,53 @@ function moveVersion(ver){
 			}
 			return;
 		}
-		e.textContent = "";
-		var tb = ce("tbody", ce("table", e));
+		var tb = document.createElement("table");
 		var obj = JSON.parse(req.responseText);
 		
-		//ヘッダ
+		var langidx = new Array();
+		
+		var templtr =  document.createElement("tr");
 		{
-			var tr = ce("tr", tb);
-			ce("th", tr);
+			var tdf = document.createElement("td");
+			tdf.className = "filename";
+			tdf.appendChild(document.createElement("a"));
+			templtr.appendChild(tdf);
+
+			var tr = document.createElement("tr");
+			tr.appendChild(document.createElement("th"));
 			for(var i = 0; i < obj["langs"].length; ++i){
-				 ce("th", tr).textContent = obj["langs"][i];
+				var th = document.createElement("th");
+				th.textContent = obj["langs"][i];
+				tr.appendChild(th);
+				
+				langidx[obj["langs"][i]] = i + 1;
+
+				var td = document.createElement("td");
+				td.className = "notranslation";
+				templtr.appendChild(td);
 			}
+			tb.appendChild(tr);
 		}
+		
 		//ボディ
 		for(var i = 0; i < obj["files"].length; ++i){
-			var tr = ce("tr", tb);
+			var tr = templtr.cloneNode(true);
 			//ファイル名
 			var file = obj["files"][i];
-			var tdf = ce("td", tr);
-			tdf.className = "filename";
-			var af = ce("a", tdf);
+			var af = tr.firstChild.firstChild;
 			af.href = docUrl(ver, file["filename"]);
 			af.textContent = file["filename"];
 			//各言語
-			for(var j = 0; j < obj["langs"].length; ++j){
-				var lang = obj["langs"][j];
-				var c = className(file[lang], file["en"], lang);
-				ctd(tr, keta(file[lang])).className = c;
+			for(var lang in file){
+				if(lang != "filename"){
+					var td = tr.childNodes[langidx[lang]];
+					td.className = className(file[lang], file["en"], lang);
+					td.textContent = keta(file[lang]);
+				}
 			}
+			tb.appendChild(tr);
 		}
+		e.replaceChild(tb, e.firstChild);
 	};
 	req.send(null);
 }
