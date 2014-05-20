@@ -31,6 +31,13 @@ function ctd(tr, text){
 	return td;
 }
 
+function docUrl(ver, filename){
+	var url = "http://httpd.apache.org/docs/" + ver;
+	url += "/" + filename.replace( /^(.+)\.xml$/g, '$1.html' );
+	return url;
+}
+
+
 function showMsg(text, cname){
 	var e = document.getElementById("main");
 	e.textContent = "";
@@ -83,7 +90,11 @@ function moveVersion(ver){
 			var tr = ce("tr", tb);
 			//ファイル名
 			var file = obj["files"][i];
-			ctd(tr, file["filename"]).className = "filename";
+			var tdf = ce("td", tr);
+			tdf.className = "filename";
+			var af = ce("a", tdf);
+			af.href = docUrl(ver, file["filename"]);
+			af.textContent = file["filename"];
 			//各言語
 			for(var j = 0; j < obj["langs"].length; ++j){
 				var lang = obj["langs"][j];
