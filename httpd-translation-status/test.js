@@ -70,12 +70,23 @@ function moveVersion(ver){
 
 			var tr = document.createElement("tr");
 			tr.appendChild(document.createElement("th"));
+			
+			{
+				var enth = document.createElement("th");
+				enth.textContent = "en";
+				tr.appendChild(enth);
+				
+				var td = document.createElement("td");
+				td.className = "notranslation";
+				templtr.appendChild(td);
+			}			
+			
 			for(var i = 0; i < obj["langs"].length; ++i){
 				var th = document.createElement("th");
 				th.textContent = obj["langs"][i];
 				tr.appendChild(th);
 				
-				langidx[obj["langs"][i]] = i + 1;
+				langidx[obj["langs"][i]] = i + 2;
 
 				var td = document.createElement("td");
 				td.className = "notranslation";
@@ -85,20 +96,20 @@ function moveVersion(ver){
 		}
 		
 		//ボディ
-		for(var i = 0; i < obj["files"].length; ++i){
+		for(var filename in obj["files"]){
 			var tr = templtr.cloneNode(true);
 			//ファイル名
-			var file = obj["files"][i];
+			var file = obj.files[filename];
 			var af = tr.firstChild.firstChild;
-			af.href = docUrl(ver, file["filename"]);
-			af.textContent = file["filename"];
+			af.href = docUrl(ver, filename);
+			af.textContent = filename;
+			//英語
+			tr.childNodes[1].textContent = keta(file.rev);			
 			//各言語
-			for(var lang in file){
-				if(lang != "filename"){
-					var td = tr.childNodes[langidx[lang]];
-					td.className = className(file[lang], file["en"], lang);
-					td.textContent = keta(file[lang]);
-				}
+			for(var lang in file.translations){
+				var td = tr.childNodes[langidx[lang]];
+				td.className = className(file.translations[lang], file.rev, lang);
+				td.textContent = keta(file.translations[lang]);
 			}
 			tb.appendChild(tr);
 		}

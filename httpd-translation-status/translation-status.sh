@@ -55,42 +55,62 @@ langs=`ls style/lang | egrep -v "^en.xml$" | awk -F . '{printf $1 " ";}'`
 
 echo "{"
 echo -n "\"langs\": "
-echo -n "[ \"en\""
+echo -n "["
+first=1
 for lang in $langs; do
-	echo -n ", \"$lang\""
+	if [ $first -eq 1 ];then
+		first=0
+	else
+		echo -n ","
+	fi
+	echo -n "\"$lang\""
 done
 echo " ],"
-echo "\"files\": ["
+echo "\"files\": {"
 
 
 (
 	cd style/lang && (
-		echo -n "{ \"filename\": \"style/lang/\","
-		echo -n " \"en\": "
+		echo -n "\"style/lang/\": {"
+		echo -n " \"rev\": "
 		english en.xml
+		echo -n ", \"translations\":{"
+		first=1
 		for lang in $langs; do
 			foo=$(otherlang "${lang}.xml")
+			if [ $first -eq 1 ];then
+				first=0
+			else
+				echo -n ", "
+			fi
 			if [ "$foo" != "" ];then
-				echo -n ", \"${lang}\": ${foo}"
+				echo -n "\"${lang}\": ${foo}"
 			fi
 		done
-		echo -n " }"
+		echo -n "} }"
 	)
 )
 
 find_xml . | while read file;  do
 	echo ", "
-	echo -n "{ \"filename\": \"${file#./}\","
-	echo -n " \"en\": "
+	echo -n "\"${file#./}\":{"
+	echo -n " \"rev\": "
 	english $file
+	echo -n ", \"translations\":{"
+	first=1
 	for lang in $langs; do
 		foo=$(otherlang ${file}.$lang)
 		if [ "$foo" != "" ];then
-			echo -n ", \"${lang}\": ${foo}"
+			if [ $first -eq 1 ];then
+				first=0
+			else
+				echo -n ", "
+			fi
+			echo -n "\"${lang}\": ${foo}"
 		fi
 	done
-	echo -n " }"
+	echo -n "} }"
 done
 echo ""
-echo "]"
+echo "}"
 echo "}"
