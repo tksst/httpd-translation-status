@@ -71,27 +71,19 @@ function moveVersion(ver){
 			var tr = document.createElement("tr");
 			tr.appendChild(document.createElement("th"));
 			
-			{
-				var enth = document.createElement("th");
-				enth.textContent = "en";
-				tr.appendChild(enth);
-				
-				var td = document.createElement("td");
-				td.className = "notranslation";
-				templtr.appendChild(td);
-			}			
-			
-			for(var i = 0; i < obj["langs"].length; ++i){
+			function foobar(lang, i, dummy){
 				var th = document.createElement("th");
-				th.textContent = obj["langs"][i];
+				th.textContent = lang;
 				tr.appendChild(th);
-				
-				langidx[obj["langs"][i]] = i + 2;
+
+				langidx[lang] = i + 2;
 
 				var td = document.createElement("td");
 				td.className = "notranslation";
 				templtr.appendChild(td);
 			}
+			foobar("en", 1, null);
+			obj.langs.forEach(foobar);
 			tb.appendChild(tr);
 		}
 		
