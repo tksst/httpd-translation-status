@@ -3,6 +3,17 @@ function keta(num){
 	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
 }
 
+function createElement(tag, parent, f){
+	var e = document.createElement(tag);
+	if(f !== undefined && f !== null){
+		f(e);
+	}
+	if(parent !== undefined && parent !== null){
+		parent.appendChild(e);
+	}
+	return e;
+}
+
 function className(value, envalue, lang){
 	if(value == null){
 		return "notranslation";
@@ -23,7 +34,7 @@ function docUrl(ver, filename){
 }
 
 function showMsg(text, cname){
-	var foo = document.createElement("div");
+	var foo = createElement("div");
 	foo.className = cname;
 	foo.textContent = text;
 	var e = document.getElementById("main");
@@ -56,36 +67,34 @@ function moveVersion(ver){
 			}
 			return;
 		}
-		var tb = document.createElement("table");
+		var tb = createElement("table");
 		var obj = JSON.parse(req.responseText);
 		
 		var langidx = new Array();
 		
-		var templtr =  document.createElement("tr");
-		{
-			var tdf = document.createElement("td");
-			tdf.className = "filename";
-			tdf.appendChild(document.createElement("a"));
-			templtr.appendChild(tdf);
+		var templtr =  createElement("tr");
+		createElement("td", templtr, function(td){
+			td.className = "filename";
+			td.appendChild(createElement("a"));
+		});
 
-			var tr = document.createElement("tr");
-			tr.appendChild(document.createElement("th"));
+		createElement("tr", tb, function(tr){
+			createElement("th", tr);
 			
-			function foobar(lang, i, dummy){
-				var th = document.createElement("th");
-				th.textContent = lang;
-				tr.appendChild(th);
+			function foobar(lang, i){
+				createElement("th", tr, function(th){
+					th.textContent = lang;
+				});
 
 				langidx[lang] = i + 2;
 
-				var td = document.createElement("td");
-				td.className = "notranslation";
-				templtr.appendChild(td);
+				createElement("td", templtr, function(td){
+					td.className = "notranslation";
+				});
 			}
-			foobar("en", 1, null);
+			foobar("en", 1);
 			obj.langs.forEach(foobar);
-			tb.appendChild(tr);
-		}
+		});
 		
 		//ボディ
 		for(var filename in obj["files"]){
@@ -96,7 +105,7 @@ function moveVersion(ver){
 			af.href = docUrl(ver, filename);
 			af.textContent = filename;
 			//英語
-			tr.childNodes[1].textContent = keta(file.rev);			
+			tr.childNodes[1].textContent = keta(file.rev);
 			//各言語
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
