@@ -28,9 +28,29 @@ function className(value, envalue, lang){
 }
 
 function docUrl(ver, filename){
-	var url = "http://httpd.apache.org/docs/" + ver;
-	url += "/" + filename.replace( /^(.+)\.xml$/g, '$1.html' );
+	var url = "http://httpd.apache.org/docs/" + ver + "/";
+	url += langfile(filename).replace( /^(.+)\.xml$/g, '$1.html' );
 	return url;
+}
+
+function viewvcUrl(ver, base, lang){
+	var url = "http://svn.apache.org/viewvc/httpd/httpd/";
+	url += ver == "trunk" ? "trunk" : ("branches/" + ver + ".x");
+	url += "/docs/manual/" + langfile(base, lang);
+	return url;
+}
+
+function langfile(base, lang){
+	if(lang === undefined){
+		lang = "en";
+	}
+	if(base === "style/lang/"){
+		return base + lang + ".xml";
+	}
+	if(lang == "en"){
+		return base;
+	}
+	return base + "." + lang;
 }
 
 function showMsg(text, cname){
@@ -90,6 +110,9 @@ function moveVersion(ver){
 
 				createElement("td", templtr, function(td){
 					td.className = "notranslation";
+					if(lang == "en"){
+						createElement("a", td);
+					}
 				});
 			}
 			foobar("en", 1);
@@ -105,12 +128,17 @@ function moveVersion(ver){
 			af.href = docUrl(ver, filename);
 			af.textContent = filename;
 			//英語
-			tr.childNodes[1].textContent = keta(file.rev);
+			var a = tr.childNodes[1].firstChild;
+			a.href = viewvcUrl(ver, filename);
+			a.textContent = keta(file.rev);
 			//各言語
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
 				td.className = className(file.translations[lang], file.rev, lang);
-				td.textContent = keta(file.translations[lang]);
+				createElement("a", td, function(a){
+					a.href = viewvcUrl(ver, filename, lang);
+					a.textContent = keta(file.translations[lang]);
+				});
 			}
 			tb.appendChild(tr);
 		}
