@@ -53,9 +53,8 @@ langs=`ls style/lang | egrep -v "^en.xml$" | awk -F . '{printf $1 " ";}'`
 # error: ファイルは存在するが、リビジョン不明
 # 値無し: ファイルが存在しない
 
-echo "{"
-echo -n "\"langs\": "
-echo -n "["
+
+echo -n "{\"langs\":["
 first=1
 for lang in $langs; do
 	if [ $first -eq 1 ];then
@@ -65,38 +64,38 @@ for lang in $langs; do
 	fi
 	echo -n "\"$lang\""
 done
-echo " ],"
-echo "\"files\": {"
+echo "],"
+echo "\"files\":{"
 
 
 (
 	cd style/lang && (
-		echo -n "\"style/lang/\": {"
-		echo -n " \"rev\": "
+		echo -n "\"style/lang/\":{"
+		echo -n "\"rev\":"
 		english en.xml
-		echo -n ", \"translations\":{"
+		echo -n ",\"translations\":{"
 		first=1
 		for lang in $langs; do
 			foo=$(otherlang "${lang}.xml")
 			if [ $first -eq 1 ];then
 				first=0
 			else
-				echo -n ", "
+				echo -n ","
 			fi
 			if [ "$foo" != "" ];then
-				echo -n "\"${lang}\": ${foo}"
+				echo -n "\"${lang}\":${foo}"
 			fi
 		done
-		echo -n "} }"
+		echo -n "}}"
 	)
 )
 
 find_xml . | while read file;  do
-	echo ", "
+	echo ","
 	echo -n "\"${file#./}\":{"
-	echo -n " \"rev\": "
+	echo -n "\"rev\":"
 	english $file
-	echo -n ", \"translations\":{"
+	echo -n ",\"translations\":{"
 	first=1
 	for lang in $langs; do
 		foo=$(otherlang ${file}.$lang)
@@ -104,13 +103,12 @@ find_xml . | while read file;  do
 			if [ $first -eq 1 ];then
 				first=0
 			else
-				echo -n ", "
+				echo -n ","
 			fi
-			echo -n "\"${lang}\": ${foo}"
+			echo -n "\"${lang}\":${foo}"
 		fi
 	done
-	echo -n "} }"
+	echo -n "}}"
 done
 echo ""
-echo "}"
-echo "}"
+echo "}}"
