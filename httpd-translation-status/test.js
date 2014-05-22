@@ -14,19 +14,6 @@ function createElement(tag, parent, f){
 	return e;
 }
 
-function className(value, envalue, lang){
-	if(value == null){
-		return "notranslation";
-	}
-	if(value == "error"){
-		return "error";
-	}
-	if(lang != "en"){
-		return value < envalue ? "outdated" : "uptodate"
-	}
-	return "unknown";
-}
-
 function docUrl(ver, filename){
 	var url = "http://httpd.apache.org/docs/" + ver + "/";
 	url += langfile(filename).replace( /^(.+)\.xml$/g, '$1.html' );
@@ -109,7 +96,6 @@ function moveVersion(ver){
 				langidx[lang] = i + 2;
 
 				createElement("td", templtr, function(td){
-					td.className = "notranslation";
 					if(lang == "en"){
 						createElement("a", td);
 					}
@@ -129,15 +115,27 @@ function moveVersion(ver){
 			af.textContent = filename;
 			//英語
 			var a = tr.childNodes[1].firstChild;
+			if(file.rev == "error"){
+				tr.childNodes[1].className = "error";
+			}
 			a.href = viewvcUrl(ver, filename);
 			a.textContent = keta(file.rev);
 			//各言語
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
-				td.className = className(file.translations[lang], file.rev, lang);
+				var trrev = file.translations[lang];
+				if(trrev == "error"){
+					td.className = "error";
+				}
+				else if(file.rev == trrev){
+					td.className = "uptodate";
+				}
+				else {
+					td.className = "outdated";
+				}
 				createElement("a", td, function(a){
 					a.href = viewvcUrl(ver, filename, lang);
-					a.textContent = keta(file.translations[lang]);
+					a.textContent = keta(trrev);
 				});
 			}
 			tb.appendChild(tr);
