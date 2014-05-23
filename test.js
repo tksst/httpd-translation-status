@@ -27,6 +27,14 @@ function viewvcUrl(ver, base, lang){
 	return url;
 }
 
+function viewvcDiffUrl(ver, base, rev, trrev, format){
+	var url = viewvcUrl(ver, base) + "?r1=" + trrev + "&r2=" + rev;
+	if(format !== undefined){
+		url += "&diff_format=" + format;
+	}
+	return url;
+}
+
 function langfile(base, lang){
 	if(lang === undefined){
 		lang = "en";
@@ -124,6 +132,10 @@ function moveVersion(ver){
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
 				var trrev = file.translations[lang];
+				createElement("a", td, function(a){
+					a.href = viewvcUrl(ver, filename, lang);
+					a.textContent = keta(trrev);
+				});
 				if(trrev == "error"){
 					td.className = "error";
 				}
@@ -132,11 +144,14 @@ function moveVersion(ver){
 				}
 				else {
 					td.className = "outdated";
+					var NBSP = unescape("%u00A0");
+					td.appendChild(document.createTextNode(NBSP+NBSP));
+					createElement("a", td, function(a){
+						a.href = viewvcDiffUrl(ver, filename, file.rev, trrev, "l");
+						a.textContent = "diff";
+					});
 				}
-				createElement("a", td, function(a){
-					a.href = viewvcUrl(ver, filename, lang);
-					a.textContent = keta(trrev);
-				});
+
 			}
 			tb.appendChild(tr);
 		}
