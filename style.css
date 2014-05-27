@@ -16,8 +16,18 @@ th{
 td{
     text-align: right;
 }
+td:nth-child(2n){
+    background-color: #FFFFFD;
+}
+td:nth-child(2n+1){
+    background-color: #FFFDFF;
+}
 td.filename{
     text-align: left;
+}
+td.notranslation{
+    text-align: center;
+    color: #DDD;
 }
 td.outdated{
     background-color: #FF0;
@@ -28,6 +38,7 @@ td.error{
 td.uptodate{
     background-color: #0FF;
 }
+
 .errormsg{
     background-color: #FF0;
 }

@@ -107,6 +107,10 @@ function moveVersion(ver){
 					if(lang == "en"){
 						createElement("a", td);
 					}
+					else{
+						td.textContent = lang;
+						td.className = "notranslation";
+					}
 				});
 			}
 			foobar("en", 1);
@@ -132,9 +136,10 @@ function moveVersion(ver){
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
 				var trrev = file.translations[lang];
-				createElement("a", td, function(a){
+				createElement("a", null, function(a){
 					a.href = viewvcUrl(ver, filename, lang);
 					a.textContent = keta(trrev);
+					td.replaceChild(a, td.firstChild);
 				});
 				if(trrev == "error"){
 					td.className = "error";
