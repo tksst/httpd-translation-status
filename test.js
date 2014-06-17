@@ -13,10 +13,11 @@
 //   limitations under the License.
 
 //UTF-8
+var NBSP = unescape("%u00A0");
 
 // 12345678 -> 12 345 678
 function addThousandsSeparator(num){
-	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1 ' );
+	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + NBSP );
 }
 
 function createElement(tag, parent, f){
@@ -172,7 +173,6 @@ function moveVersion(ver){
 				}
 				else {
 					td.className = "outdated";
-					var NBSP = unescape("%u00A0");
 					td.appendChild(document.createTextNode(NBSP+NBSP));
 					createElement("a", td, function(a){
 						a.href = viewvcDiffUrl(ver, filename, file.rev, trrev, "l");
