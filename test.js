@@ -13,8 +13,10 @@
 //   limitations under the License.
 
 //UTF-8
-function keta(num){
-	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
+
+// 12345678 -> 12 345 678
+function addThousandsSeparator(num){
+	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1 ' );
 }
 
 function createElement(tag, parent, f){
@@ -152,14 +154,14 @@ function moveVersion(ver){
 				tr.childNodes[1].className = "error";
 			}
 			a.href = viewvcUrl(ver, filename);
-			a.textContent = keta(file.rev);
+			a.textContent = addThousandsSeparator(file.rev);
 			//各言語
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
 				var trrev = file.translations[lang];
 				createElement("a", null, function(a){
 					a.href = viewvcUrl(ver, filename, lang);
-					a.textContent = keta(trrev);
+					a.textContent = addThousandsSeparator(trrev);
 					td.replaceChild(a, td.firstChild);
 				});
 				if(trrev == "error"){
