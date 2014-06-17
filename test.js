@@ -75,8 +75,15 @@ function getVersion(){
 	return h == "2.0" || h == "2.2" || h == "2.4" || h == "trunk" ? h : null;
 }
 
+function changeVersionLinkStyle(ver){
+	["trunk", "2.4", "2.2", "2.0"].forEach(function(v, index, array){
+		document.getElementById("link_" + v).className = ver == v ? "strongLink" : "normalLink";
+	});
+}
+
 function moveVersion(ver){
 	location.hash = "#" + ver;
+	changeVersionLinkStyle(ver);
 	
 	var e = document.getElementById("main");
 	showMsg("loading...", "infomsg");
