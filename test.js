@@ -140,22 +140,22 @@ function moveVersion(ver){
 			obj.langs.forEach(foobar);
 		});
 		
-		//ボディ
+		// body
 		for(var filename in obj["files"]){
 			var tr = templtr.cloneNode(true);
-			//ファイル名
+			// filename
 			var file = obj.files[filename];
 			var af = tr.firstChild.firstChild;
 			af.href = docUrl(ver, filename);
 			af.textContent = filename;
-			//英語
+			// English
 			var a = tr.childNodes[1].firstChild;
 			if(file.rev == "error"){
 				tr.childNodes[1].className = "error";
 			}
 			a.href = viewvcUrl(ver, filename);
 			a.textContent = addThousandsSeparator(file.rev);
-			//各言語
+			// Each lang
 			for(var lang in file.translations){
 				var td = tr.childNodes[langidx[lang]];
 				var trrev = file.translations[lang];
