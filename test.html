@@ -23,12 +23,19 @@
 <script type="text/javascript" defer="defer" src="test.js" ></script>
 </head>
 <body>
-<p>
+<p>This page reads the JSONs below and display the translation status. The JSONs are generated hourly with <a href="translation-status.tar.xz">this script</a></p>
+<p><a href="trunk.json">trunk.json</a> <a href="2.4.json">2.4.json</a> <a href="2.2.json">2.2.json</a> <a href="2.0.json">2.0.json</a></p>
+<p></p>
+
+<p>Version: 
 <a href="#trunk" id="link_trunk">trunk</a> 
 <a href="#2.4"   id="link_2.4">2.4</a> 
 <a href="#2.2"   id="link_2.2">2.2</a> 
 <a href="#2.0"   id="link_2.0">2.0</a>
 </p>
+<table>
+<tr><td class="uptodate">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>up to date</td><td class="outdated">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>outdated</td><td class="error">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>failed to get its revision</td></tr>
+</table>
 <div id="main">
 </div>
 </body>
