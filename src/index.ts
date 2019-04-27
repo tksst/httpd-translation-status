@@ -69,7 +69,7 @@ function showMsg(text, cname){
 	var foo = createElement("div");
 	foo.className = cname;
 	foo.textContent = text;
-	var e = document.getElementById("main");
+	var e = document.getElementsByTagName("main")[0];
 	e.replaceChild(foo, e.firstChild);
 }
 
@@ -88,7 +88,7 @@ function moveVersion(ver){
 	location.hash = "#" + ver;
 	changeVersionLinkStyle(ver);
 	
-	var e = document.getElementById("main");
+	var e = document.getElementsByTagName("main")[0];
 	showMsg("loading...", "infomsg");
 
 	var req = new XMLHttpRequest();
@@ -216,6 +216,6 @@ window.onload = function(){
 
 	const foo = `<p>This page reads the JSONs below and display the translation status. The JSONs are generated hourly with <a href="translation-status.tar.xz">this script</a></p>
 	<p><a href='trunk.json'>trunk.json</a> <a href="2.4.json">2.4.json</a> <a href="2.2.json">2.2.json</a> <a href="2.0.json">2.0.json</a></p>`;
-	document.getElementsByTagName("body")[0].insertAdjacentHTML('afterbegin',foo);
+	document.getElementsByTagName("header")[0].insertAdjacentHTML('afterbegin',foo);
 
 };
