@@ -12,23 +12,16 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import 'core-js/es/object/entries';
+
 //UTF-8
 const NBSP = "\u00A0";
 
 // 12345678 -> 12 345 678
 function addThousandsSeparator(num: number){
 	return num == null ? null : String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + NBSP );
-}
-
-function createElement(tag: string, parent?: Node, f?){
-	const e = document.createElement(tag);
-	if(f !== undefined && f !== null){
-		f(e);
-	}
-	if(parent !== undefined && parent !== null){
-		parent.appendChild(e);
-	}
-	return e;
 }
 
 function docUrl(ver: string, filename: string){
@@ -44,7 +37,7 @@ function viewvcUrl(ver: string, base: string, lang?: string){
 	return url;
 }
 
-function viewvcDiffUrl(ver: string, base: string, rev: string, trrev: string, format? : string){
+function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, format? : string){
 	let url = viewvcUrl(ver, base) + `?r1=${trrev}&r2=${rev}`;
 	if(format !== undefined){
 		url += `&diff_format=${format}`;
@@ -63,16 +56,18 @@ function langfile(base: string, lang: string = "en"){
 }
 
 function showMsg(text: string, cname: string){
-	const foo = createElement("div");
-	foo.className = cname;
-	foo.textContent = text;
-	const e = document.getElementsByTagName("main")[0];
-	e.replaceChild(foo, e.firstChild);
+	ReactDOM.render(<div className={cname}>{text}</div>, document.getElementsByTagName("main")[0])
 }
 
-function getVersion(){
+function getVersion() {
 	const h = location.hash.substr(1);
-	return h === "2.0" || h === "2.2" || h === "2.4" || h === "trunk" ? h : null;
+	if (h === "") {
+		return "trunk";
+	}
+	if (["trunk", "2.4", "2.2", "2.0"].indexOf(h) < 0) {
+		return null;
+	}
+	return h;
 }
 
 function changeVersionLinkStyle(ver: string){
@@ -81,138 +76,88 @@ function changeVersionLinkStyle(ver: string){
 	});
 }
 
-function moveVersion(ver: string){
-	location.hash = "#" + ver;
-	changeVersionLinkStyle(ver);
-	
-	const e = document.getElementsByTagName("main")[0];
-	showMsg("loading...", "infomsg");
 
-	const req = new XMLHttpRequest();
-	req.open('GET', ver + ".json", true);
-	req.onreadystatechange = function(){
-		if(req.readyState !== XMLHttpRequest.DONE){
-			return;
-		}
-		if(req.status !== 200){
-			if(req.status === 0){
-				showMsg("Unknown Error", "errormsg");
-			}
-			else{
-				showMsg("HTTP " + req.status + " Error", "errormsg");
-			}
-			return;
-		}
-		const tb = createElement("table");
-		const obj = JSON.parse(req.responseText);
-		
-		const langidx = new Array();
-		
-		const templtr =  createElement("tr");
-		createElement("td", templtr, function(td){
-			td.className = "filename";
-			td.appendChild(createElement("a"));
-		});
+const translations2Array = (langs: string[], translations) => (
+	langs.map(it => translations.hasOwnProperty(it) ? translations[it] : null)
+);
 
-		createElement("tr", tb, function(tr){
-			createElement("th", tr);
-			
-			function foobar(lang, i){
-				createElement("th", tr, function(th){
-					th.textContent = lang;
-				});
+const TableBody = ({ ver, resutlObj }) => {
+	return Object.entries(resutlObj.files).map(([filename, value]) => {
 
-				langidx[lang] = i + 2;
+		const englishRev = value.rev;
 
-				createElement("td", templtr, function(td){
-					if(lang === "en"){
-						createElement("a", td);
-					}
-					else{
-						td.textContent = lang;
-						td.className = "notranslation";
-					}
-				});
-			}
-			foobar("en", 1);
-			obj.langs.forEach(foobar);
-		});
-		
-		// body
-		for(const filename in obj["files"]){
-			const tr = templtr.cloneNode(true);
-			// filename
-			const file = obj.files[filename];
-			const af = tr.firstChild.firstChild;
-			af.href = docUrl(ver, filename);
-			af.textContent = filename;
-			// English
-			const a = tr.childNodes[1].firstChild;
-			if(file.rev === "error"){
-				tr.childNodes[1].className = "error";
-			}
-			a.href = viewvcUrl(ver, filename);
-			a.textContent = addThousandsSeparator(file.rev);
-			// Each lang
-			for(const lang in file.translations){
-				const td = tr.childNodes[langidx[lang]];
-				const trrev = file.translations[lang];
-				createElement("a", null, function(a){
-					a.href = viewvcUrl(ver, filename, lang);
-					a.textContent = addThousandsSeparator(trrev);
-					td.replaceChild(a, td.firstChild);
-				});
-				if(trrev === "error"){
-					td.className = "error";
-				}
-				else if(file.rev === trrev){
-					td.className = "uptodate";
-				}
-				else {
-					td.className = "outdated";
-					td.appendChild(document.createTextNode(NBSP+NBSP));
-					createElement("a", td, function(a){
-						a.href = viewvcDiffUrl(ver, filename, file.rev, trrev, "l");
-						a.textContent = "diff";
-					});
-				}
+		const translationcells = translations2Array(resutlObj.langs, value.translations).map((translationRev, index) => {
+			const lang = resutlObj.langs[index]
 
+			if (translationRev === null) {
+				return <td className="notranslation">{lang}</td>
 			}
-			tb.appendChild(tr);
-		}
-		e.replaceChild(tb, e.firstChild);
-	};
-	req.send(null);
+
+			if (translationRev === "error") {
+				return <td className="error"><a href={viewvcUrl(ver, filename, lang)}>{translationRev}</a></td>
+			}
+
+			if (translationRev < englishRev) {
+				return (
+					<td className="outdated">
+						<a href={viewvcUrl(ver, filename, lang)}>{addThousandsSeparator(translationRev)}</a>
+						{NBSP}{NBSP}
+						<a href={viewvcDiffUrl(ver, filename, englishRev, translationRev, "l")}>diff</a>
+					</td>
+				)
+			}
+			else {
+				return <td className="uptodate"><a href={viewvcUrl(ver, filename, lang)}>{addThousandsSeparator(translationRev)}</a></td>
+			}
+		})
+
+		return <tr>
+			<td className="filename"><a href={docUrl(ver, filename)}>{filename}</a></td>
+			<td><a href={viewvcUrl(ver, filename)}>{addThousandsSeparator(englishRev)}</a></td>
+			{translationcells}
+		</tr>
+	})
 }
 
-window.addEventListener("DOMContentLoaded", (e: Event) => {
-	const ver = getVersion();
-	if(ver === null){
-		showMsg("unknown version", "errormsg");
+const TableHead = ({ langs }) => <tr><th></th><th>en</th>{langs.map(it => <th>{it}</th>)}</tr>
+
+const load = (ver: string, r: boolean, e: Event) => {
+	showMsg("loading...", "infomsg");
+
+	if (ver === null) {
+		ver = getVersion();
+		if (ver === null) {
+			showMsg("unknown version", "errormsg");
+			return r;
+		}
 	}
-	else{
-		moveVersion(ver);
+	changeVersionLinkStyle(ver);
+
+	const req = new XMLHttpRequest();
+	req.open('GET', `${ver}.json`, true);
+	req.onload = () => {
+		if (req.status !== 200) {
+			showMsg("HTTP " + req.status + " Error", "errormsg");
+			return r;
+		}
+		const obj = JSON.parse(req.responseText);
+		ReactDOM.render(<table><thead><TableHead langs={obj.langs} /></thead><tbody><TableBody ver={ver} resutlObj={obj} /></tbody></table>, document.getElementsByTagName("main")[0]);
 	}
-	
-	document.getElementById("link_trunk").addEventListener("click", (e: Event) => {
-		moveVersion("trunk");
-		return false;
-	});
-	document.getElementById("link_2.4").addEventListener("click", (e: Event) => {
-		moveVersion("2.4");
-		return false;
-	});
-	document.getElementById("link_2.2").addEventListener("click", (e: Event) => {
-		moveVersion("2.2");
-		return false;
-	});
-	document.getElementById("link_2.0").addEventListener("click", (e: Event) => {
-		moveVersion("2.0");
-		return false;
-	});
+	req.onerror = () => {
+		showMsg("Unknown Error", "errormsg");
+	}
+	req.send(null);
+	return r;
+};
+
+window.addEventListener("DOMContentLoaded", load.bind(null, null, true));
+window.addEventListener("DOMContentLoaded", () => {
+	document.getElementById("link_trunk").addEventListener("click", load.bind(null, "trunk", false));
+	document.getElementById("link_2.4").addEventListener("click", load.bind(null, "2.4", false));
+	document.getElementById("link_2.2").addEventListener("click", load.bind(null, "2.2", false));
+	document.getElementById("link_2.0").addEventListener("click", load.bind(null, "2.0", false));
 
 	const foo = `<p>This page reads the JSONs below and display the translation status. The JSONs are generated hourly with <a href="translation-status.tar.xz">this script</a></p>
 	<p><a href='trunk.json'>trunk.json</a> <a href="2.4.json">2.4.json</a> <a href="2.2.json">2.2.json</a> <a href="2.0.json">2.0.json</a></p>`;
 	document.getElementsByTagName("header")[0].insertAdjacentHTML('afterbegin',foo);
-
 });
