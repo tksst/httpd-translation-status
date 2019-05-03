@@ -14,7 +14,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import 'core-js/es/object/entries';
+import 'core-js/es/object';
 
 //UTF-8
 const NBSP = "\u00A0";
@@ -82,7 +82,9 @@ const translations2Array = (langs: string[], translations) => (
 );
 
 const TableBody = ({ ver, resutlObj }) => {
-	return Object.entries(resutlObj.files).map(([filename, value]) => {
+
+	const result = Object.entries(resutlObj.files).map(([filename, value2]) => {
+		const value = value2 as any;
 
 		const englishRev = value.rev;
 
@@ -117,6 +119,8 @@ const TableBody = ({ ver, resutlObj }) => {
 			{translationcells}
 		</tr>
 	})
+
+	return <>{result}</>
 }
 
 const TableHead = ({ langs }) => <tr><th></th><th>en</th>{langs.map(it => <th>{it}</th>)}</tr>
