@@ -6,6 +6,11 @@
             "es5",
             "es2017.object"
         ],
-        "jsx": "react"
+        "jsx": "react",
+        "alwaysStrict": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true
     }
 }

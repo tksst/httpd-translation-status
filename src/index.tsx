@@ -142,7 +142,6 @@ const load = (ver: string, r: boolean, e: Event) => {
 	req.onload = () => {
 		if (req.status !== 200) {
 			showMsg("HTTP " + req.status + " Error", "errormsg");
-			return r;
 		}
 		const obj = JSON.parse(req.responseText);
 		
@@ -152,7 +151,7 @@ const load = (ver: string, r: boolean, e: Event) => {
 				<tbody><TableBody ver={ver} resutlObj={obj} /></tbody>
 				<tfoot><TableHead langs={obj.langs} /></tfoot>
 			</table>, document.getElementsByTagName("main")[0]);
-	}
+	};
 	req.onerror = () => {
 		showMsg("Unknown Error", "errormsg");
 	}
