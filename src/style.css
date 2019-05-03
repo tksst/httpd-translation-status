@@ -17,6 +17,18 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+thead th{
+    /* for safari */
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+tfoot th{
+    /* for safari */
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+}
 td,th{
     background-color: #FFF;
     padding: 5px;
@@ -39,10 +51,6 @@ td:nth-child(2n+1){
 }
 td.filename{
     text-align: left;
-}
-td.notranslation{
-    text-align: center;
-    color: #DDD;
 }
 td.outdated{
     background-color: #FF0;

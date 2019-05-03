@@ -92,7 +92,7 @@ const TableBody = ({ ver, resutlObj }) => {
 			const lang = resutlObj.langs[index]
 
 			if (translationRev === null) {
-				return <td className="notranslation">{lang}</td>
+				return <td></td>
 			}
 
 			if (translationRev === "error") {
@@ -145,7 +145,13 @@ const load = (ver: string, r: boolean, e: Event) => {
 			return r;
 		}
 		const obj = JSON.parse(req.responseText);
-		ReactDOM.render(<table><thead><TableHead langs={obj.langs} /></thead><tbody><TableBody ver={ver} resutlObj={obj} /></tbody></table>, document.getElementsByTagName("main")[0]);
+		
+		ReactDOM.render(
+			<table>
+				<thead><TableHead langs={obj.langs} /></thead>
+				<tbody><TableBody ver={ver} resutlObj={obj} /></tbody>
+				<tfoot><TableHead langs={obj.langs} /></tfoot>
+			</table>, document.getElementsByTagName("main")[0]);
 	}
 	req.onerror = () => {
 		showMsg("Unknown Error", "errormsg");
