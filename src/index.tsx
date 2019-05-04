@@ -140,15 +140,13 @@ const TableHead = ({ langs }) => (
     </tr>
 );
 
-const load = (ver: string, r: boolean) => {
+const load = () => {
     showMsg("loading...", "infomsg");
 
+    const ver = getVersion();
     if (ver === null) {
-        ver = getVersion();
-        if (ver === null) {
-            showMsg("unknown version", "errormsg");
-            return r;
-        }
+        showMsg("unknown version", "errormsg");
+        return;
     }
     changeVersionLinkStyle(ver);
 
@@ -179,16 +177,12 @@ const load = (ver: string, r: boolean) => {
         showMsg("Unknown Error", "errormsg");
     };
     req.send(null);
-    return r;
 };
 
-window.addEventListener("DOMContentLoaded", load.bind(null, null, true));
-window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("link_trunk").addEventListener("click", load.bind(null, "trunk", false));
-    document.getElementById("link_2.4").addEventListener("click", load.bind(null, "2.4", false));
-    document.getElementById("link_2.2").addEventListener("click", load.bind(null, "2.2", false));
-    document.getElementById("link_2.0").addEventListener("click", load.bind(null, "2.0", false));
+window.addEventListener("DOMContentLoaded", load);
+window.addEventListener("hashchange", load);
 
+window.addEventListener("DOMContentLoaded", () => {
     const foo = `<p>This page reads the JSONs below and display the translation status. The JSONs are generated hourly with <a href="translation-status.tar.xz">this script</a></p>
     <p><a href='trunk.json'>trunk.json</a> <a href="2.4.json">2.4.json</a> <a href="2.2.json">2.2.json</a> <a href="2.0.json">2.0.json</a></p>`;
     document.getElementsByTagName("header")[0].insertAdjacentHTML("afterbegin", foo);
