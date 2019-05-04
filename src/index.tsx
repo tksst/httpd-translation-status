@@ -24,6 +24,16 @@ function addThousandsSeparator(num: number) {
     return num == null ? null : String(num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, `$1${NBSP}`);
 }
 
+function langfile(base: string, lang: string = "en") {
+    if (base === "style/lang/") {
+        return `${base}${lang}.xml`;
+    }
+    if (lang === "en") {
+        return base;
+    }
+    return `${base}.${lang}`;
+}
+
 function docUrl(ver: string, filename: string) {
     let url = `http://httpd.apache.org/docs/${ver}/`;
     url += langfile(filename).replace(/^(.+)\.xml$/g, "$1.html");
@@ -45,22 +55,12 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
     return url;
 }
 
-function langfile(base: string, lang: string = "en") {
-    if (base === "style/lang/") {
-        return `${base}${lang}.xml`;
-    }
-    if (lang === "en") {
-        return base;
-    }
-    return `${base}.${lang}`;
-}
-
 function showMsg(text: string, cname: string) {
     ReactDOM.render(<div className={cname}>{text}</div>, document.getElementsByTagName("main")[0]);
 }
 
 function getVersion() {
-    const h = location.hash.substr(1);
+    const h = window.location.hash.substr(1);
     if (h === "") {
         return "trunk";
     }
@@ -71,7 +71,7 @@ function getVersion() {
 }
 
 function changeVersionLinkStyle(ver: string) {
-    ["trunk", "2.4", "2.2", "2.0"].forEach((v, index, array) => {
+    ["trunk", "2.4", "2.2", "2.0"].forEach(v => {
         document.getElementById(`link_${v}`).className = ver === v ? "strongLink" : "normalLink";
     });
 }
@@ -145,7 +145,7 @@ const TableHead = ({ langs }) => (
     </tr>
 );
 
-const load = (ver: string, r: boolean, e: Event) => {
+const load = (ver: string, r: boolean) => {
     showMsg("loading...", "infomsg");
 
     if (ver === null) {
