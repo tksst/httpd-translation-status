@@ -19,11 +19,6 @@ import "core-js/es/object";
 // UTF-8
 const NBSP = "\u00A0";
 
-// 12345678 -> 12 345 678
-function addThousandsSeparator(num: number) {
-    return num == null ? null : String(num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, `$1${NBSP}`);
-}
-
 function langfile(base: string, lang: string = "en") {
     if (base === "style/lang/") {
         return `${base}${lang}.xml`;
@@ -104,7 +99,7 @@ const TableBody = ({ ver, resutlObj }) => {
                 if (translationRev < englishRev) {
                     return (
                         <td className="outdated">
-                            <a href={viewvcUrl(ver, filename, lang)}>{addThousandsSeparator(translationRev)}</a>
+                            <a href={viewvcUrl(ver, filename, lang)}>{translationRev.toLocaleString()}</a>
                             {NBSP}
                             {NBSP}
                             <a href={viewvcDiffUrl(ver, filename, englishRev, translationRev, "l")}>diff</a>
@@ -113,7 +108,7 @@ const TableBody = ({ ver, resutlObj }) => {
                 }
                 return (
                     <td className="uptodate">
-                        <a href={viewvcUrl(ver, filename, lang)}>{addThousandsSeparator(translationRev)}</a>
+                        <a href={viewvcUrl(ver, filename, lang)}>{translationRev.toLocaleString()}</a>
                     </td>
                 );
             }
@@ -125,7 +120,7 @@ const TableBody = ({ ver, resutlObj }) => {
                     <a href={docUrl(ver, filename)}>{filename}</a>
                 </td>
                 <td>
-                    <a href={viewvcUrl(ver, filename)}>{addThousandsSeparator(englishRev)}</a>
+                    <a href={viewvcUrl(ver, filename)}>{englishRev.toLocaleString()}</a>
                 </td>
                 {translationcells}
             </tr>
