@@ -16,6 +16,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "core-js/es/object";
 
+import "normalize.css";
 import "./style.css";
 
 // UTF-8
