@@ -11,6 +11,8 @@
         "strictFunctionTypes": true,
         "strictBindCallApply": true,
         "noImplicitThis": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        "sourceMap": true,
+        "module": "es2015"
     }
 }

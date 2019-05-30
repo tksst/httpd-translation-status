@@ -3,19 +3,29 @@
     "@types/react": "16.8.17",
     "@types/react-dom": "16.8.4",
     "@typescript-eslint/eslint-plugin": "1.9.0",
+    "autoprefixer": "9.5.1",
     "browser-sync": "2.26.5",
-    "concurrently": "4.1.0",
+    "css-loader": "2.1.1",
+    "cssnano": "4.1.10",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-config-prettier": "4.3.0",
+    "eslint-loader": "2.1.2",
     "eslint-plugin-import": "2.17.2",
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "3.1.0",
     "eslint-plugin-react": "7.13.0",
-    "parcel-bundler": "1.12.3",
+    "html-webpack-plugin": "3.2.0",
+    "mini-css-extract-plugin": "0.6.0",
+    "npm-run-all": "4.1.5",
+    "postcss-loader": "3.0.0",
     "prettier": "1.17.1",
     "rimraf": "2.6.3",
-    "typescript": "3.4.5"
+    "ts-loader": "6.0.1",
+    "typescript": "3.4.5",
+    "url-loader": "1.1.2",
+    "webpack": "4.32.2",
+    "webpack-cli": "3.3.2"
   },
   "dependencies": {
     "core-js": "3.1.0",
@@ -23,12 +33,13 @@
     "react-dom": "16.8.6"
   },
   "scripts": {
-    "dev": "concurrently --kill-others \"npm:browser-sync\" \"npm:parcel-watch\"  ",
-    "browser-sync": "browser-sync start --server dist/",
-    "parcel-watch": "parcel watch src/index.html --public-url ./",
-    "build": "parcel build src/index.html --public-url ./",
+    "start": "run-p bs webpack-watch",
+    "buildDev": "webpack --mode development",
+    "webpack-watch": "webpack --mode development --watch",
+    "bs": "browser-sync dist --watch",
+    "build": "run-s clean build:webpack",
+    "build:webpack": "webpack --mode production",
     "clean": "rimraf dist",
-    "lint": "eslint --ext .ts,.tsx src/",
     "lint-fix": "eslint --ext .ts,.tsx src/ --fix"
   }
 }

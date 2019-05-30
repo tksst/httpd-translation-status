@@ -16,6 +16,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "core-js/es/object";
 
+import "./style.css";
+
 // UTF-8
 const NBSP = "\u00A0";
 
