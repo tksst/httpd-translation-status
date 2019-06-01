@@ -4,6 +4,36 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = (_, argv) => {
     const DEV = argv.mode === "development";
 
+    const cssLoaders = num => [
+        {
+            loader: MiniCssExtractPlugin.loader,
+        },
+        {
+            loader: "css-loader",
+            options: {
+                url: true,
+                sourceMap: DEV,
+                importLoaders: num,
+            },
+        },
+        {
+            loader: "postcss-loader",
+            options: {
+                plugins: [
+                    require("autoprefixer")({ grid: true }),
+                    require("cssnano")({ cssDeclarationSorter: true }),
+                ],
+                sourceMap: DEV,
+            },
+        },
+    ];
+
+    const sassLoaders = cssLoaders(2);
+    sassLoaders.push({
+        loader: "sass-loader",
+        options: { sourceMap: DEV },
+    });
+
     const conf = {
         entry: "./src/index.tsx",
         output: {
@@ -23,29 +53,11 @@ module.exports = (_, argv) => {
                 },
                 {
                     test: /\.css$/,
-                    use: [
-                        {
-                            loader: MiniCssExtractPlugin.loader,
-                        },
-                        {
-                            loader: "css-loader",
-                            options: {
-                                url: true,
-                                sourceMap: DEV,
-                                importLoaders: 1,
-                            },
-                        },
-                        {
-                            loader: "postcss-loader",
-                            options: {
-                                plugins: [
-                                    require("autoprefixer")({ grid: true }),
-                                    require("cssnano")({ cssDeclarationSorter: true }),
-                                ],
-                                sourceMap: DEV,
-                            },
-                        },
-                    ],
+                    use: cssLoaders(1),
+                },
+                {
+                    test: /\.scss$/,
+                    use: sassLoaders,
                 },
                 {
                     test: /\.(jpe?g|png)$/,
