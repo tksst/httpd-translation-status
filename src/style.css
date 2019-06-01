@@ -14,57 +14,64 @@
  */
  body{
      margin: 0.5rem;
+     font-family: sans-serif;
  }
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-thead th{
+.translations thead th {
     /* for safari */
     position: -webkit-sticky;
     position: sticky;
     top: 0;
 }
-tfoot th{
+.translations tfoot th {
     /* for safari */
     position: -webkit-sticky;
     position: sticky;
     bottom: 0;
 }
 td,th{
-    background-color: #FFF;
     padding: 5px;
-    border: 1px #E3E3E3 solid;
+    border: 1px black solid;
 }
-th{
-    background-color: #F5F5F5;
+.translations th {
+    background-color: rgb(0, 58, 145);
+    color: white;
     font-weight: bold;
     line-height: 120%;
     text-align: center;
+    border-color: white;
 }
-td{
+.translations td {
     text-align: right;
 }
-td:nth-child(2n){
-    background-color: #FFFFFD;
+.translations tr:nth-child(2n) {
+    background-color: rgb(255, 255, 255);
 }
-td:nth-child(2n+1){
-    background-color: #FFFDFF;
+.translations tr:nth-child(2n+1) {
+    background-color: hsl(226, 100%, 96%);
 }
 td.filename{
+    background-color: hsl(0, 0%, 90%);
     text-align: left;
+    border-right-style: double;
+    border-right-width: 0.2rem;
 }
 td.outdated{
-    background-color: #FF0;
+    background-color: rgb(255, 255, 175);
+    color: rgb(114, 68, 0);
 }
 td.error{
-    background-color: #F00;
+    background-color: rgb(255, 208, 213);
+    color: rgb(125, 0, 0);
 }
 td.uptodate{
-    background-color: #0FF;
+    background-color: rgb(198, 239, 206);
+    color: rgb(0, 75, 0);
 }
-
 .errormsg{
     background-color: #FF0;
 }
@@ -73,6 +80,12 @@ td.uptodate{
 }
 a {
     text-decoration: none;
+}
+.translations td a {
+    color: inherit;
+}
+.legend td {
+    min-width: 1.1rem;
 }
 a:hover {
     text-decoration: underline;

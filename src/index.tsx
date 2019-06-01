@@ -162,7 +162,7 @@ const load = () => {
         const obj = JSON.parse(req.responseText);
 
         ReactDOM.render(
-            <table>
+            <table className="translations">
                 <thead>
                     <TableHead langs={obj.langs} />
                 </thead>
