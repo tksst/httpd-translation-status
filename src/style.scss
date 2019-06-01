@@ -12,65 +12,70 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- body{
+body {
      margin: 0.5rem;
      font-family: sans-serif;
- }
+}
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-.translations thead th {
-    /* for safari */
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-}
-.translations tfoot th {
-    /* for safari */
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 0;
-}
-td,th{
+
+td, th {
     padding: 5px;
     border: 1px black solid;
 }
-.translations th {
-    background-color: rgb(0, 58, 145);
-    color: white;
-    font-weight: bold;
-    line-height: 120%;
-    text-align: center;
-    border-color: white;
+
+.translations {
+    thead th {
+        position: sticky;
+        top: 0;
+    }
+    tfoot th {
+        position: sticky;
+        bottom: 0;
+    }
+    th {
+        background-color: rgb(0, 58, 145);
+        color: white;
+        font-weight: bold;
+        line-height: 120%;
+        text-align: center;
+        border-color: white;
+    }
+    td {
+        text-align: right;
+        a {
+            color: inherit;
+        }
+    }
+    tr:nth-child(2n) {
+        background-color: white;
+    }
+    tr:nth-child(2n+1) {
+        background-color: hsl(226, 100%, 96%);
+    }
 }
-.translations td {
-    text-align: right;
-}
-.translations tr:nth-child(2n) {
-    background-color: rgb(255, 255, 255);
-}
-.translations tr:nth-child(2n+1) {
-    background-color: hsl(226, 100%, 96%);
-}
-td.filename{
-    background-color: hsl(0, 0%, 90%);
-    text-align: left;
-    border-right-style: double;
-    border-right-width: 0.2rem;
-}
-td.outdated{
-    background-color: rgb(255, 255, 175);
-    color: rgb(114, 68, 0);
-}
-td.error{
-    background-color: rgb(255, 208, 213);
-    color: rgb(125, 0, 0);
-}
-td.uptodate{
-    background-color: rgb(198, 239, 206);
-    color: rgb(0, 75, 0);
+td {
+    &.filename{
+        background-color: hsl(0, 0%, 90%);
+        text-align: left;
+        border-right-style: double;
+        border-right-width: 0.2rem;
+    }
+    &.outdated{
+        background-color: rgb(255, 255, 175);
+        color: rgb(114, 68, 0);
+    }
+    &.error{
+        background-color: rgb(255, 208, 213);
+        color: rgb(125, 0, 0);
+    }
+    &.uptodate{
+        background-color: rgb(198, 239, 206);
+        color: rgb(0, 75, 0);
+    }
 }
 .errormsg{
     background-color: #FF0;
@@ -80,18 +85,13 @@ td.uptodate{
 }
 a {
     text-decoration: none;
-}
-.translations td a {
-    color: inherit;
+    &:hover {
+        text-decoration: underline;
+    }
+    &.strongLink{
+        font-size: 200%;
+    }
 }
 .legend td {
     min-width: 1.1rem;
-}
-a:hover {
-    text-decoration: underline;
-}
-a.normalLink{
-}
-a.strongLink{
-    font-size: 200%;
 }
