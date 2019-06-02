@@ -46,6 +46,12 @@ td, th {
     }
     td {
         text-align: right;
+        &.filename{
+            background-color: rgba(0, 0, 0, 0.1);
+            text-align: left;
+            border-right-style: double;
+            border-right-width: 0.2rem;
+        }
         a {
             color: inherit;
         }
@@ -58,12 +64,6 @@ td, th {
     }
 }
 td {
-    &.filename{
-        background-color: hsl(0, 0%, 90%);
-        text-align: left;
-        border-right-style: double;
-        border-right-width: 0.2rem;
-    }
     &.outdated{
         background-color: rgb(255, 255, 175);
         color: rgb(114, 68, 0);
