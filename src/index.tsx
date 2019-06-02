@@ -184,9 +184,3 @@ const load = () => {
 
 window.addEventListener("DOMContentLoaded", load);
 window.addEventListener("hashchange", load);
-
-window.addEventListener("DOMContentLoaded", () => {
-    const foo = `<p>This page reads the JSONs below and display the translation status. The JSONs are generated hourly with <a href="translation-status.tar.xz">this script</a></p>
-    <p><a href='trunk.json'>trunk.json</a> <a href="2.4.json">2.4.json</a> <a href="2.2.json">2.2.json</a> <a href="2.0.json">2.0.json</a></p>`;
-    document.getElementsByTagName("header")[0].insertAdjacentHTML("afterbegin", foo);
-});
