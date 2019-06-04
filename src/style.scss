@@ -28,6 +28,9 @@ td, th {
 }
 
 .translations {
+    td, th {
+        border-color: #becbff;
+    }
     thead th {
         position: sticky;
         top: 0;
