@@ -40,6 +40,8 @@ module.exports = {
 
         "react/prop-types": "off",
         "react/jsx-key": "warn",
+        // ignoreClassFields does not work
+        "react/destructuring-assignment": "off",
         "no-param-reassign": "off",
         "no-prototype-builtins": "warn",
         "prefer-template": "warn",

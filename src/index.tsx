@@ -19,9 +19,10 @@ import "core-js/es/promise";
 import "whatwg-fetch";
 
 import "normalize.css";
+import "react-tabs/style/react-tabs.css";
 import "./style.scss";
 
-import { documentDomContentLoaded } from "./DomContentLoaded";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 // UTF-8
 const NBSP = "\u00A0";
@@ -55,27 +56,6 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
         url += `&diff_format=${format}`;
     }
     return url;
-}
-
-function showMsg(text: string, cname: string) {
-    ReactDOM.render(<div className={cname}>{text}</div>, document.getElementsByTagName("main")[0]);
-}
-
-function getVersion() {
-    const h = window.location.hash.substr(1);
-    if (h === "") {
-        return "trunk";
-    }
-    if (["trunk", "2.4", "2.2", "2.0"].indexOf(h) < 0) {
-        return null;
-    }
-    return h;
-}
-
-function changeVersionLinkStyle(ver: string) {
-    ["trunk", "2.4", "2.2", "2.0"].forEach(v => {
-        document.getElementById(`link_${v}`).className = ver === v ? "strongLink" : "normalLink";
-    });
 }
 
 const translations2Array = (langs: string[], translations) =>
@@ -155,6 +135,67 @@ const fetchTranslationsData = async (ver: string) => {
     return response.json();
 };
 
+class VersionPane extends React.Component<
+    { ver: "trunk" | "2.4" | "2.2" | "2.0" },
+    { status: "success" | "loading" | "error"; obj?: any; error?: string }
+> {
+    public constructor(props) {
+        super(props);
+        this.state = { status: "loading" };
+    }
+
+    public async componentDidMount() {
+        try {
+            this.setState({
+                status: "success",
+                obj: await fetchTranslationsData(this.props.ver),
+            });
+        } catch (error) {
+            this.setState({
+                status: "error",
+                error: typeof error === "number" ? `HTTP ${error} Error` : error.toString(),
+            });
+        }
+    }
+
+    public render() {
+        switch (this.state.status) {
+            case "loading":
+                return <div className="infomsg">loading...</div>;
+            case "success":
+                return <TranslationTable obj={this.state.obj} ver={this.props.ver} />;
+            case "error":
+                // TODO: リロードボタン
+                return <div className="errormsg">{this.state.error}</div>;
+            default:
+                return <div className="errormsg">System Error. Something went wrong.</div>;
+        }
+    }
+}
+
+const TabArea: React.FC = () => (
+    <Tabs forceRenderTabPanel>
+        <TabList>
+            <Tab>trunk</Tab>
+            <Tab>2.4</Tab>
+            <Tab>2.2</Tab>
+            <Tab>2.0</Tab>
+        </TabList>
+        <TabPanel>
+            <VersionPane ver="trunk" />
+        </TabPanel>
+        <TabPanel>
+            <VersionPane ver="2.4" />
+        </TabPanel>
+        <TabPanel>
+            <VersionPane ver="2.2" />
+        </TabPanel>
+        <TabPanel>
+            <VersionPane ver="2.0" />
+        </TabPanel>
+    </Tabs>
+);
+
 const TranslationTable: React.FC<{ obj: any; ver: string }> = ({ obj, ver }) => (
     <table className="translations">
         <thead>
@@ -169,34 +210,9 @@ const TranslationTable: React.FC<{ obj: any; ver: string }> = ({ obj, ver }) => 
     </table>
 );
 
-const render = ver => {
-    fetchTranslationsData(ver)
-        .then(obj => {
-            ReactDOM.render(<TranslationTable obj={obj} ver={ver} />, document.getElementsByTagName("main")[0]);
-        })
-        .catch(error => {
-            if (typeof error === "number") {
-                showMsg(`HTTP ${error} Error`, "errormsg");
-            } else {
-                showMsg(`${error}`, "errormsg");
-            }
-        });
-};
-
-const load = () => {
-    showMsg("loading...", "infomsg");
-
-    const ver = getVersion();
-    if (ver === null) {
-        showMsg("unknown version", "errormsg");
-        return;
-    }
-    changeVersionLinkStyle(ver);
-    render(ver);
-};
-
-(async () => {
-    await documentDomContentLoaded();
-    load();
-    window.addEventListener("hashchange", load);
-})();
+ReactDOM.render(
+    <React.StrictMode>
+        <TabArea />
+    </React.StrictMode>,
+    document.getElementsByTagName("main")[0]
+);
