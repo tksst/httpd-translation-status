@@ -68,6 +68,9 @@ module.exports = (_, argv) => {
                 },
             ],
         },
+        resolve: {
+            extensions: [".tsx", ".ts", ".jsx", ".js"],
+        },
         // eval-source-mapのほうが高速らしいのでdevelopmentで使いたいが
         // CSSのソースマップがおかしくなるので使えない
         devtool: "source-map",

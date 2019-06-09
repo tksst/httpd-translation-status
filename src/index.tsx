@@ -15,9 +15,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "core-js/es/object";
+import "core-js/es/promise";
+import "whatwg-fetch";
 
 import "normalize.css";
 import "./style.scss";
+
+import { documentDomContentLoaded } from "./DomContentLoaded";
 
 // UTF-8
 const NBSP = "\u00A0";
@@ -143,6 +147,42 @@ const TableHead = ({ langs }) => (
     </tr>
 );
 
+const fetchTranslationsData = async (ver: string) => {
+    const response = await fetch(`${ver}.json`);
+    if (!response.ok) {
+        throw response.status;
+    }
+    return response.json();
+};
+
+const TranslationTable: React.FC<{ obj: any; ver: string }> = ({ obj, ver }) => (
+    <table className="translations">
+        <thead>
+            <TableHead langs={obj.langs} />
+        </thead>
+        <tbody>
+            <TableBody ver={ver} resutlObj={obj} />
+        </tbody>
+        <tfoot>
+            <TableHead langs={obj.langs} />
+        </tfoot>
+    </table>
+);
+
+const render = ver => {
+    fetchTranslationsData(ver)
+        .then(obj => {
+            ReactDOM.render(<TranslationTable obj={obj} ver={ver} />, document.getElementsByTagName("main")[0]);
+        })
+        .catch(error => {
+            if (typeof error === "number") {
+                showMsg(`HTTP ${error} Error`, "errormsg");
+            } else {
+                showMsg(`${error}`, "errormsg");
+            }
+        });
+};
+
 const load = () => {
     showMsg("loading...", "infomsg");
 
@@ -152,35 +192,11 @@ const load = () => {
         return;
     }
     changeVersionLinkStyle(ver);
-
-    const req = new XMLHttpRequest();
-    req.open("GET", `${ver}.json`, true);
-    req.onload = () => {
-        if (req.status !== 200) {
-            showMsg(`HTTP ${req.status} Error`, "errormsg");
-        }
-        const obj = JSON.parse(req.responseText);
-
-        ReactDOM.render(
-            <table className="translations">
-                <thead>
-                    <TableHead langs={obj.langs} />
-                </thead>
-                <tbody>
-                    <TableBody ver={ver} resutlObj={obj} />
-                </tbody>
-                <tfoot>
-                    <TableHead langs={obj.langs} />
-                </tfoot>
-            </table>,
-            document.getElementsByTagName("main")[0]
-        );
-    };
-    req.onerror = () => {
-        showMsg("Unknown Error", "errormsg");
-    };
-    req.send(null);
+    render(ver);
 };
 
-window.addEventListener("DOMContentLoaded", load);
-window.addEventListener("hashchange", load);
+(async () => {
+    await documentDomContentLoaded();
+    load();
+    window.addEventListener("hashchange", load);
+})();

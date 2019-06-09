@@ -22,7 +22,8 @@ module.exports = {
     "settings": {
         "react": {
             "version": "detect"
-        }
+        },
+        "import/resolver": "webpack",        
     },
     "rules": {
         "react/jsx-filename-extension": [
