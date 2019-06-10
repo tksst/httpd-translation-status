@@ -37,13 +37,13 @@ module.exports = (_, argv) => {
     const conf = {
         entry: "./src/index.tsx",
         output: {
-            filename: "[contentHash].js",
+            filename: "assets/[contentHash].js",
         },
         plugins: [
             new HtmlWebpackPlugin({
                 template: "src/index.html",
             }),
-            new MiniCssExtractPlugin({ filename: "[contentHash].css" }),
+            new MiniCssExtractPlugin({ filename: "assets/[contentHash].css" }),
         ],
         module: {
             rules: [
