@@ -173,26 +173,29 @@ class VersionPane extends React.Component<
     }
 }
 
+const versions: readonly ("trunk" | "2.4" | "2.2" | "2.0")[] = ["trunk", "2.4", "2.2", "2.0"];
+const getVersionIndex = () => {
+    // ignores leading "#"
+    const hash = window.location.hash.substring(1);
+    const i = versions.indexOf(hash as any);
+    return i >= 0 ? i : 0;
+};
+const setHash = i => {
+    window.location.hash = versions[i];
+};
+
 const TabArea: React.FC = () => (
-    <Tabs forceRenderTabPanel>
+    <Tabs onSelect={setHash} defaultIndex={getVersionIndex()} forceRenderTabPanel>
         <TabList>
-            <Tab>trunk</Tab>
-            <Tab>2.4</Tab>
-            <Tab>2.2</Tab>
-            <Tab>2.0</Tab>
+            {versions.map(it => (
+                <Tab>{it}</Tab>
+            ))}
         </TabList>
-        <TabPanel>
-            <VersionPane ver="trunk" />
-        </TabPanel>
-        <TabPanel>
-            <VersionPane ver="2.4" />
-        </TabPanel>
-        <TabPanel>
-            <VersionPane ver="2.2" />
-        </TabPanel>
-        <TabPanel>
-            <VersionPane ver="2.0" />
-        </TabPanel>
+        {versions.map(it => (
+            <TabPanel>
+                <VersionPane ver={it} />
+            </TabPanel>
+        ))}
     </Tabs>
 );
 
