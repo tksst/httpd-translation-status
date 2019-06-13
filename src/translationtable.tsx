@@ -49,8 +49,7 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
     return url;
 }
 
-const translations2Array = (langs: string[], translations) =>
-    langs.map(it => (translations.hasOwnProperty(it) ? translations[it] : null));
+const translations2Array = (langs: string[], translations) => langs.map(it => translations[it]);
 
 const TableBody = ({ ver, resutlObj }) => {
     const result = Object.entries(resutlObj.files).map(([filename, value2]) => {
@@ -62,7 +61,7 @@ const TableBody = ({ ver, resutlObj }) => {
             (translationRev, index) => {
                 const lang = resutlObj.langs[index];
 
-                if (translationRev === null) {
+                if (translationRev === null || translationRev === undefined) {
                     return <td />;
                 }
 
