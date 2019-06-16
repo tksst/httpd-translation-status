@@ -25,6 +25,8 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 import TranslationTable from "./translationtable";
 
+type Version = "trunk" | "2.4" | "2.2" | "2.0";
+
 const fetchTranslationsData = async (ver: string) => {
     const response = await fetch(`${ver}.json`);
     if (!response.ok) {
@@ -34,7 +36,7 @@ const fetchTranslationsData = async (ver: string) => {
 };
 
 class VersionPane extends React.Component<
-    { ver: "trunk" | "2.4" | "2.2" | "2.0" },
+    { ver: Version },
     { status: "success" | "loading" | "error"; obj?: any; error?: string }
 > {
     public constructor(props) {
@@ -71,7 +73,7 @@ class VersionPane extends React.Component<
     }
 }
 
-const versions: readonly ("trunk" | "2.4" | "2.2" | "2.0")[] = ["trunk", "2.4", "2.2", "2.0"];
+const versions: readonly Version[] = ["trunk", "2.4", "2.2", "2.0"];
 const getVersionIndex = () => {
     // ignores leading "#"
     const hash = window.location.hash.substring(1);
