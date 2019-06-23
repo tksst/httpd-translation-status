@@ -76,8 +76,14 @@ class VersionPane extends React.Component<{ ver: Version }, SuccessStatus | Load
             case "success":
                 return <TranslationTable obj={this.state.obj} ver={this.props.ver} />;
             case "error":
-                // TODO: リロードボタン
-                return <div className="errormsg">{this.state.error}</div>;
+                return (
+                    <>
+                        <div className="errormsg">{this.state.error}</div>
+                        <button type="button" onClick={() => this.componentDidMount()}>
+                            reload
+                        </button>
+                    </>
+                );
             default:
                 return <div className="errormsg">System Error. Something went wrong.</div>;
         }
