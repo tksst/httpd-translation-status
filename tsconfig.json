@@ -8,10 +8,7 @@
             "es2017.object"
         ],
         "jsx": "react",
-        "alwaysStrict": true,
-        "strictFunctionTypes": true,
-        "strictBindCallApply": true,
-        "noImplicitThis": true,
+        "strict": true,
         "noImplicitReturns": true,
         "sourceMap": true,
         "module": "es2015",

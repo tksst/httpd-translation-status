@@ -23,11 +23,11 @@ import "./style.scss";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
-import TranslationTable from "./translationtable";
+import { TranslationTable, Data } from "./translationtable";
 
 type Version = "trunk" | "2.4" | "2.2" | "2.0";
 
-const fetchTranslationsData = async (ver: string) => {
+const fetchTranslationsData = async (ver: string): Promise<Data> => {
     const response = await fetch(`${ver}.json`);
     if (!response.ok) {
         throw response.status;
@@ -35,11 +35,22 @@ const fetchTranslationsData = async (ver: string) => {
     return response.json();
 };
 
-class VersionPane extends React.Component<
-    { ver: Version },
-    { status: "success" | "loading" | "error"; obj?: any; error?: string }
-> {
-    public constructor(props) {
+interface SuccessStatus {
+    status: "success";
+    obj: Data;
+}
+
+interface LoadingStatus {
+    status: "loading";
+}
+
+interface ErrorStatus {
+    status: "error";
+    error: string;
+}
+
+class VersionPane extends React.Component<{ ver: Version }, SuccessStatus | LoadingStatus | ErrorStatus> {
+    public constructor(props: { ver: Version }) {
         super(props);
         this.state = { status: "loading" };
     }
@@ -80,7 +91,7 @@ const getVersionIndex = () => {
     const i = versions.indexOf(hash as any);
     return i >= 0 ? i : 0;
 };
-const setHash = i => {
+const setHash = (i: number): void => {
     window.location.hash = versions[i];
 };
 

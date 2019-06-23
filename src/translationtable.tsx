@@ -18,7 +18,7 @@ import "core-js/es/object";
 // UTF-8
 const NBSP = "\u00A0";
 
-function langfile(base: string, lang: string = "en") {
+function langfile(base: string, lang: string = "en"): string {
     if (base === "style/lang/") {
         return `${base}${lang}.xml`;
     }
@@ -28,20 +28,20 @@ function langfile(base: string, lang: string = "en") {
     return `${base}.${lang}`;
 }
 
-function docUrl(ver: string, filename: string) {
+function docUrl(ver: string, filename: string): string {
     let url = `http://httpd.apache.org/docs/${ver}/`;
     url += langfile(filename).replace(/^(.+)\.xml$/g, "$1.html");
     return url;
 }
 
-function viewvcUrl(ver: string, base: string, lang?: string) {
+function viewvcUrl(ver: string, base: string, lang?: string): string {
     let url = "http://svn.apache.org/viewvc/httpd/httpd/";
     url += ver === "trunk" ? "trunk" : `branches/${ver}.x`;
     url += `/docs/manual/${langfile(base, lang)}`;
     return url;
 }
 
-function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, format?: string) {
+function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, format?: string): string {
     let url = `${viewvcUrl(ver, base)}?r1=${trrev}&r2=${rev}`;
     if (format !== undefined) {
         url += `&diff_format=${format}`;
@@ -49,12 +49,23 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
     return url;
 }
 
-const translations2Array = (langs: string[], translations) => langs.map(it => translations[it]);
+export interface Data {
+    langs: string[];
+    files: {
+        [key: string]: {
+            rev: number;
+            translations: {
+                [key: string]: number | "error";
+            };
+        };
+    };
+}
 
-const TableBody = ({ ver, resutlObj }) => {
-    const result = Object.entries(resutlObj.files).map(([filename, value2]) => {
-        const value = value2 as any;
+const translations2Array = (langs: string[], translations: { [key: string]: number | "error" }) =>
+    langs.map(it => translations[it]);
 
+const TableBody: React.FC<{ resutlObj: Data; ver: string }> = ({ ver, resutlObj }) => {
+    const result = Object.entries(resutlObj.files).map(([filename, value]) => {
         const englishRev = value.rev;
 
         const translationcells = translations2Array(resutlObj.langs, value.translations).map(
@@ -107,7 +118,7 @@ const TableBody = ({ ver, resutlObj }) => {
     return <>{result}</>;
 };
 
-const TableHead = ({ langs }) => (
+const TableHead: React.FC<{ langs: string[] }> = ({ langs }) => (
     <tr>
         <th />
         <th>en</th>
@@ -117,7 +128,7 @@ const TableHead = ({ langs }) => (
     </tr>
 );
 
-const TranslationTable: React.FC<{ obj: any; ver: string }> = ({ obj, ver }) => (
+export const TranslationTable: React.FC<{ obj: Data; ver: string }> = ({ obj, ver }) => (
     <table className="translations">
         <thead>
             <TableHead langs={obj.langs} />
@@ -130,5 +141,3 @@ const TranslationTable: React.FC<{ obj: any; ver: string }> = ({ obj, ver }) => 
         </tfoot>
     </table>
 );
-
-export default TranslationTable;
