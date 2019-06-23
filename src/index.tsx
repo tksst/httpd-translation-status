@@ -49,46 +49,46 @@ interface ErrorStatus {
     error: string;
 }
 
-class VersionPane extends React.Component<{ ver: Version }, SuccessStatus | LoadingStatus | ErrorStatus> {
-    public constructor(props: { ver: Version }) {
-        super(props);
-        this.state = { status: "loading" };
-    }
+const VersionPane: React.FC<{ ver: Version }> = ({ ver }) => {
+    const [state, setState] = React.useState<SuccessStatus | LoadingStatus | ErrorStatus>({ status: "loading" });
 
-    public async componentDidMount() {
-        try {
-            this.setState({
-                status: "success",
-                obj: await fetchTranslationsData(this.props.ver),
+    const load = () => {
+        setState({ status: "loading" });
+        fetchTranslationsData(ver)
+            .then(obj => {
+                setState({
+                    status: "success",
+                    obj,
+                });
+            })
+            .catch(error => {
+                setState({
+                    status: "error",
+                    error: typeof error === "number" ? `HTTP ${error} Error` : error.toString(),
+                });
             });
-        } catch (error) {
-            this.setState({
-                status: "error",
-                error: typeof error === "number" ? `HTTP ${error} Error` : error.toString(),
-            });
-        }
-    }
+    };
 
-    public render() {
-        switch (this.state.status) {
-            case "loading":
-                return <div className="infomsg">loading...</div>;
-            case "success":
-                return <TranslationTable obj={this.state.obj} ver={this.props.ver} />;
-            case "error":
-                return (
-                    <>
-                        <div className="errormsg">{this.state.error}</div>
-                        <button type="button" onClick={() => this.componentDidMount()}>
-                            reload
-                        </button>
-                    </>
-                );
-            default:
-                return <div className="errormsg">System Error. Something went wrong.</div>;
-        }
+    React.useEffect(load, []);
+
+    switch (state.status) {
+        case "loading":
+            return <div className="infomsg">loading...</div>;
+        case "success":
+            return <TranslationTable obj={state.obj} ver={ver} />;
+        case "error":
+            return (
+                <>
+                    <div className="errormsg">{state.error}</div>
+                    <button type="button" onClick={load}>
+                        reload
+                    </button>
+                </>
+            );
+        default:
+            return <div className="errormsg">System Error. Something went wrong.</div>;
     }
-}
+};
 
 const versions: readonly Version[] = ["trunk", "2.4", "2.2", "2.0"];
 const getVersionIndex = () => {
