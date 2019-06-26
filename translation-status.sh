@@ -78,13 +78,13 @@ for lang in $langs; do
 	echo -n "\"$lang\""
 done
 echo "],"
-echo "\"files\":{"
+echo "\"files\":["
 
 
 (
 	cd style/lang && (
-		echo -n "\"style/lang/\":{"
-		echo -n "\"rev\":"
+		echo -n "{\"name\":\"style/lang/\","
+		echo -n "\"en\":"
 		english en.xml
 		echo -n ",\"translations\":{"
 		first=1
@@ -105,8 +105,8 @@ echo "\"files\":{"
 
 find_xml . | while read file;  do
 	echo ","
-	echo -n "\"${file#./}\":{"
-	echo -n "\"rev\":"
+	echo -n "{\"name\":\"${file#./}\","
+	echo -n "\"en\":"
 	english $file
 	echo -n ",\"translations\":{"
 	first=1
@@ -124,4 +124,4 @@ find_xml . | while read file;  do
 	echo -n "}}"
 done
 echo ""
-echo "}}"
+echo "]}"

@@ -49,73 +49,79 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
     return url;
 }
 
-export interface Data {
-    langs: string[];
-    files: {
-        [key: string]: {
-            rev: number;
-            translations: {
-                [key: string]: number | "error";
-            };
-        };
-    };
+interface File {
+    name: string;
+    en: number;
+    translations: { [key: string]: number | "error" };
 }
 
-const translations2Array = (langs: string[], translations: { [key: string]: number | "error" }) =>
-    langs.map(it => translations[it]);
+export interface Data {
+    langs: string[];
+    files: File[];
+}
 
-const TableBody: React.FC<{ resutlObj: Data; ver: string }> = ({ ver, resutlObj }) => {
-    const result = Object.entries(resutlObj.files).map(([filename, value]) => {
-        const englishRev = value.rev;
+const TableBody: React.FC<{ files: File[]; langs: string[]; ver: string }> = props => (
+    <>
+        {props.files.map(file => (
+            <FileRow key={file.name} file={file} {...props} />
+        ))}
+    </>
+);
 
-        const translationcells = translations2Array(resutlObj.langs, value.translations).map(
-            (translationRev, index) => {
-                const lang = resutlObj.langs[index];
+const FileRow: React.FC<{ file: File; langs: string[]; ver: string }> = props => (
+    <tr>
+        <FileCell {...props} />
+        <EnglishCell {...props} />
+        {props.langs.map(it => (
+            <TranslationCell key={`${props.file.name}_${it}`} lang={it} {...props} />
+        ))}
+    </tr>
+);
 
-                if (translationRev === null || translationRev === undefined) {
-                    return <td />;
-                }
+const FileCell: React.FC<{ file: File; ver: string }> = ({ file, ver }) => (
+    <td className="filename">
+        <a href={docUrl(ver, file.name)}>{file.name}</a>
+    </td>
+);
 
-                if (translationRev === "error") {
-                    return (
-                        <td className="error">
-                            <a href={viewvcUrl(ver, filename, lang)}>{translationRev}</a>
-                        </td>
-                    );
-                }
+const EnglishCell: React.FC<{ file: File; ver: string }> = ({ file, ver }) => (
+    <td>
+        <a href={viewvcUrl(ver, file.name)}>{file.en.toLocaleString()}</a>
+    </td>
+);
 
-                if (translationRev < englishRev) {
-                    return (
-                        <td className="outdated">
-                            <a href={viewvcUrl(ver, filename, lang)}>{translationRev.toLocaleString()}</a>
-                            {NBSP}
-                            {NBSP}
-                            <a href={viewvcDiffUrl(ver, filename, englishRev, translationRev, "l")}>diff</a>
-                        </td>
-                    );
-                }
-                return (
-                    <td className="uptodate">
-                        <a href={viewvcUrl(ver, filename, lang)}>{translationRev.toLocaleString()}</a>
-                    </td>
-                );
-            }
-        );
+const TranslationCell: React.FC<{ file: File; lang: string; ver: string }> = ({ file, lang, ver }) => {
+    const rev = file.translations[lang];
+    const viewvc = viewvcUrl(ver, file.name, lang);
 
+    if (rev === null || rev === undefined) {
+        return <td />;
+    }
+
+    if (rev === "error") {
         return (
-            <tr>
-                <td className="filename">
-                    <a href={docUrl(ver, filename)}>{filename}</a>
-                </td>
-                <td>
-                    <a href={viewvcUrl(ver, filename)}>{englishRev.toLocaleString()}</a>
-                </td>
-                {translationcells}
-            </tr>
+            <td className="error">
+                <a href={viewvc}>{rev}</a>
+            </td>
         );
-    });
+    }
 
-    return <>{result}</>;
+    if (rev < file.en) {
+        return (
+            <td className="outdated">
+                <a href={viewvc}>{rev.toLocaleString()}</a>
+                {NBSP}
+                {NBSP}
+                <a href={viewvcDiffUrl(ver, file.name, file.en, rev, "l")}>diff</a>
+            </td>
+        );
+    }
+
+    return (
+        <td className="uptodate">
+            <a href={viewvc}>{rev.toLocaleString()}</a>
+        </td>
+    );
 };
 
 const TableHead: React.FC<{ langs: string[] }> = ({ langs }) => (
@@ -134,7 +140,7 @@ export const TranslationTable: React.FC<{ obj: Data; ver: string }> = ({ obj, ve
             <TableHead langs={obj.langs} />
         </thead>
         <tbody>
-            <TableBody ver={ver} resutlObj={obj} />
+            <TableBody ver={ver} langs={obj.langs} files={obj.files} />
         </tbody>
         <tfoot>
             <TableHead langs={obj.langs} />
