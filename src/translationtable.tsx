@@ -13,7 +13,6 @@
 //   limitations under the License.
 
 import * as React from "react";
-import "core-js/es/object";
 
 // UTF-8
 const NBSP = "\u00A0";
