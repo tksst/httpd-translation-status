@@ -3,9 +3,7 @@
         "target": "ES5",
         "lib": [
             "dom",
-            "es5",
-            "es2015.promise",
-            "es2017.object"
+            "es2017"
         ],
         "jsx": "react",
         "strict": true,

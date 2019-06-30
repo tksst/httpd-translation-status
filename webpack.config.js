@@ -41,16 +41,25 @@ module.exports = (_, argv) => {
         options: { sourceMap: DEV },
     });
 
+    const PolyfillChunk = "polyfills";
+
     return {
-        entry: "./src/index.tsx",
+        entry: {
+            "index": "./src/index.tsx",
+            [PolyfillChunk]: "./src/globalPolyfills.ts",
+        },
         output: {
-            filename: "assets/[contentHash].js",
+            filename: chunkData => {
+                return chunkData.chunk.name === PolyfillChunk ? "assets/[name].js" : "assets-immutable/[contentHash].js";
+            },
         },
         plugins: [
             new HtmlWebpackPlugin({
                 template: "src/index.html",
+                // polyfills: Polyfills are loaded by index.html manually
+                excludeChunks: [ PolyfillChunk ],
             }),
-            new MiniCssExtractPlugin({ filename: "assets/[contentHash].css" }),
+            new MiniCssExtractPlugin({ filename: "assets-immutable/[contentHash].css" }),
         ],
         module: {
             rules: [
