@@ -1,10 +1,9 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = (_, argv) => {
-    const DEV = argv.mode === "development";
+const cssLoaders = (sourceMap, additionalLoaders = []) => {
 
-    const cssLoaders = num => [
+    const a = [
         {
             loader: MiniCssExtractPlugin.loader,
         },
@@ -12,8 +11,7 @@ module.exports = (_, argv) => {
             loader: "css-loader",
             options: {
                 url: true,
-                sourceMap: DEV,
-                importLoaders: num,
+                sourceMap,
             },
         },
         {
@@ -23,18 +21,27 @@ module.exports = (_, argv) => {
                     require("autoprefixer")({ grid: true }),
                     require("cssnano")({ cssDeclarationSorter: true }),
                 ],
-                sourceMap: DEV,
+                sourceMap,
             },
         },
     ];
 
-    const sassLoaders = cssLoaders(2);
-    sassLoaders.push({
+    const b = a.concat(additionalLoaders);
+    // importLoaders should be number of loaders applied before CSS loader
+    b[1].options.importLoaders = b.length - 2;
+
+    return b;
+};
+
+module.exports = (_, argv) => {
+    const DEV = argv.mode === "development";
+
+    const sassLoaders = cssLoaders(DEV, {
         loader: "sass-loader",
         options: { sourceMap: DEV },
     });
 
-    const conf = {
+    return {
         entry: "./src/index.tsx",
         output: {
             filename: "assets/[contentHash].js",
@@ -53,7 +60,7 @@ module.exports = (_, argv) => {
                 },
                 {
                     test: /\.css$/,
-                    use: cssLoaders(1),
+                    use: cssLoaders(DEV),
                 },
                 {
                     test: /\.scss$/,
@@ -75,6 +82,4 @@ module.exports = (_, argv) => {
         // CSSのソースマップがおかしくなるので使えない
         devtool: "source-map",
     };
-
-    return conf;
 };
