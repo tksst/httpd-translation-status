@@ -13,6 +13,7 @@
 //   limitations under the License.
 
 import * as React from "react";
+import { Data, File } from "./statusData";
 
 // UTF-8
 const NBSP = "\u00A0";
@@ -46,17 +47,6 @@ function viewvcDiffUrl(ver: string, base: string, rev: number, trrev: number, fo
         url += `&diff_format=${format}`;
     }
     return url;
-}
-
-interface File {
-    name: string;
-    en: number;
-    translations: { [key: string]: number | "error" };
-}
-
-export interface Data {
-    langs: string[];
-    files: File[];
 }
 
 const TableBody: React.FC<{ files: File[]; langs: string[]; ver: string }> = props => (
