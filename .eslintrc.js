@@ -45,6 +45,7 @@ module.exports = {
         "no-param-reassign": "off",
         "no-prototype-builtins": "warn",
         "prefer-template": "warn",
+        "import/prefer-default-export": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
 

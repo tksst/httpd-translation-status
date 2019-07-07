@@ -15,17 +15,9 @@
 import * as React from "react";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { TranslationTable, Data } from "./translationtable";
-
-type Version = "trunk" | "2.4" | "2.2" | "2.0";
-
-const fetchTranslationsData = async (ver: string): Promise<Data> => {
-    const response = await fetch(`${ver}.json`);
-    if (!response.ok) {
-        throw response.status;
-    }
-    return response.json();
-};
+import { TranslationTable } from "./translationtable";
+import { Data, fetchTranslationsData } from "./statusData";
+import { Version } from "./version";
 
 interface SuccessStatus {
     status: "success";
