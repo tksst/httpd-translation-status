@@ -13,10 +13,8 @@
 //   limitations under the License.
 
 import * as React from "react";
+import { ContextMenuTrigger, ContextMenu, MenuItem } from "react-contextmenu";
 import { Data, File } from "./statusData";
-
-// UTF-8
-const NBSP = "\u00A0";
 
 function langfile(base: string, lang: string = "en"): string {
     if (base === "style/lang/") {
@@ -96,12 +94,40 @@ const TranslationCell: React.FC<{ file: File; lang: string; ver: string }> = ({ 
     }
 
     if (rev < file.en) {
+        const id = `${file.name}-${lang}-${ver}`;
+
+        // ContextMenuTrigger does provide handleContextClick,
+        // but the type file does not provide it, so marked as any.
+        let ct: any = null;
+
+        // for left click
+        // some conflict occurs between typescript and react, so marked as any.
+        const toggleMenu = (e: any) => {
+            if (ct) {
+                ct.handleContextClick(e);
+            }
+        };
+
         return (
             <td className="outdated">
-                <a href={viewvc}>{rev.toLocaleString()}</a>
-                {NBSP}
-                {NBSP}
-                <a href={viewvcDiffUrl(ver, file.name, file.en, rev, "l")}>diff</a>
+                <ContextMenuTrigger
+                    id={id}
+                    ref={(c: any) => {
+                        ct = c;
+                    }}
+                >
+                    <button type="button" onClick={toggleMenu} className="outdated-menu">
+                        {rev.toLocaleString()}
+                    </button>
+                </ContextMenuTrigger>
+                <ContextMenu id={id}>
+                    <a href={viewvc} style={{ textDecoration: "none" }}>
+                        <MenuItem>ViewVC</MenuItem>
+                    </a>
+                    <a href={viewvcDiffUrl(ver, file.name, file.en, rev, "l")}>
+                        <MenuItem>diff</MenuItem>
+                    </a>
+                </ContextMenu>
             </td>
         );
     }

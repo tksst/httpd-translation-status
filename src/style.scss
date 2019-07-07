@@ -98,3 +98,28 @@ a {
 .legend td {
     min-width: 1.1rem;
 }
+
+.react-contextmenu {
+    a {
+        text-decoration: none;
+    }
+    /* react-contextmenu makes menu visible by opacity
+     * but it prevents keyboard navigations.
+     * So I override them by display: none.
+     */
+    display: none;
+}
+
+.react-contextmenu--visible {
+    display: block;
+}
+
+.outdated-menu {
+    background-color: transparent;
+    color: inherit;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
+}

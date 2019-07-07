@@ -37,6 +37,7 @@ module.exports = {
         ],
         // strange behavior, conflict with prettier?
         "react/jsx-indent": "off",
+        "react/jsx-indent-props": "off",
 
         "react/prop-types": "off",
         "react/jsx-key": "warn",
