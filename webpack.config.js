@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const cssLoaders = (sourceMap, additionalLoaders = []) => {
+const cssLoaders = (sourceMap, modules = false, additionalLoaders = []) => {
 
     const a = [
         {
@@ -12,6 +12,7 @@ const cssLoaders = (sourceMap, additionalLoaders = []) => {
             options: {
                 url: true,
                 sourceMap,
+                modules,
             },
         },
         {
@@ -36,7 +37,12 @@ const cssLoaders = (sourceMap, additionalLoaders = []) => {
 module.exports = (_, argv) => {
     const DEV = argv.mode === "development";
 
-    const sassLoaders = cssLoaders(DEV, {
+    const sassLoaders = cssLoaders(DEV, false,{
+        loader: "sass-loader",
+        options: { sourceMap: DEV },
+    });
+
+    const mouleSassLoaders = cssLoaders(DEV,true, {
         loader: "sass-loader",
         options: { sourceMap: DEV },
     });
@@ -72,8 +78,12 @@ module.exports = (_, argv) => {
                     use: cssLoaders(DEV),
                 },
                 {
-                    test: /\.scss$/,
+                    test: /(?<!\.modules)\.scss$/,
                     use: sassLoaders,
+                },
+                {
+                    test: /\.modules\.scss$/,
+                    use: mouleSassLoaders,
                 },
                 {
                     test: /\.(jpe?g|png)$/,

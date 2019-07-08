@@ -113,13 +113,3 @@ a {
 .react-contextmenu--visible {
     display: block;
 }
-
-.outdated-menu {
-    background-color: transparent;
-    color: inherit;
-    border: none;
-    cursor: pointer;
-    &:hover {
-        text-decoration: underline;
-    }
-}
