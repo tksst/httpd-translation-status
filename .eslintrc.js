@@ -50,7 +50,7 @@ module.exports = {
         "@typescript-eslint/explicit-function-return-type": "off",
 
         "prettier/prettier": [
-            "error",
+            "warn",
             {
                 "printWidth": 120,
                 "tabWidth": 4,
