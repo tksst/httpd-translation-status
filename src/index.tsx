@@ -17,7 +17,7 @@ import "./globalCss";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import TabArea from "./TabArea";
+import TabArea from "./tabArea";
 
 ReactDOM.render(
     <React.StrictMode>

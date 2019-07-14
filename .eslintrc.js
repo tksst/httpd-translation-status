@@ -8,16 +8,21 @@ module.exports = {
         "browser": true
     },
     "plugins": [
+        "unicorn",
         "@typescript-eslint",
         "react",
         "prettier",
     ],
     "extends": [
         "airbnb",
+        "plugin:unicorn/recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:prettier/recommended",
-        "prettier/@typescript-eslint"
+        "prettier",
+        "prettier/unicorn",
+        "prettier/react",
+        "prettier/@typescript-eslint",
     ],
     "settings": {
         "react": {
@@ -35,12 +40,15 @@ module.exports = {
                 ]
             }
         ],
-        // strange behavior, conflict with prettier?
-        "react/jsx-indent": "off",
 
+        "unicorn/prevent-abbreviations": "off",
+        "unicorn/prefer-query-selector": "off",
+        "unicorn/filename-case": [
+            "error",
+            { "case": "camelCase" },
+        ],
         "react/prop-types": "off",
         "react/jsx-key": "warn",
-        // ignoreClassFields does not work
         "react/destructuring-assignment": "off",
         "no-param-reassign": "off",
         "no-prototype-builtins": "warn",
