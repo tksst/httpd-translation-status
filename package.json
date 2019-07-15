@@ -32,6 +32,7 @@
     "ts-loader": "6.0.4",
     "typescript": "3.5.3",
     "url-loader": "2.0.1",
+    "wait-on": "3.3.0",
     "webpack": "4.35.3",
     "webpack-cli": "3.3.5"
   },
@@ -44,13 +45,17 @@
     "whatwg-fetch": "3.0.0"
   },
   "scripts": {
-    "start": "run-p bs webpack-watch",
+    "start": "npm-run-all _clean-indexhtml --parallel browser-sync webpack-watch",
     "buildDev": "webpack --mode development",
     "webpack-watch": "webpack --mode development --watch",
-    "bs": "browser-sync dist --watch",
+    "browser-sync": "run-s _wait-for-indexhtml _bs",
     "build": "run-s clean build:webpack",
     "build:webpack": "webpack --mode production",
     "clean": "rimraf dist",
-    "lint-fix": "eslint --ext .ts,.tsx src/ --fix"
+    "lint": "eslint --ext .ts,.tsx src/",
+    "lint-fix": "eslint --ext .ts,.tsx src/ --fix",
+    "_clean-indexhtml": "rimraf dist/index.html",
+    "_bs": "browser-sync dist --watch",
+    "_wait-for-indexhtml": "wait-on dist/index.html"
   }
 }
